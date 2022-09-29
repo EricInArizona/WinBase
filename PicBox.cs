@@ -17,13 +17,12 @@ using System.Drawing.Drawing2D;
 
 
 
-// namespace EarthScience
-// {
-
 class PicBox : PictureBox
   {
   private Bitmap GraphBitmap = null;
-
+  private int MouseX = 0;
+  private int MouseY = 0;
+  private PicBoxDrawAr picBoxDrawAr;
 
   internal PicBox()
     {
@@ -37,9 +36,29 @@ class PicBox : PictureBox
                     // Default 24 bit color.
 
     Image = GraphBitmap;
+
+    picBoxDrawAr = new PicBoxDrawAr();
+
+    MouseDown += new System.Windows.Forms.
+              MouseEventHandler( PicBoxMouseDown );
+
+    // MouseDoubleClick += new System.Windows.
+    //   Forms.MouseEventHandler(
+    //      PicBoxMouseDoubleClick );
+    // MouseMove += new System.Windows.Forms.
+    //    MouseEventHandler( PicBoxMouseMove );
+
     }
 
-  internal void ResetSize( int SetWidth, 
+
+  internal bool AddPicBoxDraw( PicBoxDraw toAdd )
+    {
+    return picBoxDrawAr.AddPicBoxDraw( toAdd );
+    }
+
+
+
+  internal void ResetSize( int SetWidth,
                            int SetHeight )
     {
     if( GraphBitmap != null )
@@ -55,7 +74,8 @@ class PicBox : PictureBox
 
     Image = GraphBitmap;
     }
- 
+
+
 
   internal void FreeEverything()
     {
@@ -82,35 +102,7 @@ class PicBox : PictureBox
 
       BitGraphic.Clear( Color.DarkBlue ); // DarkBlue );
 
-=== Do I put this TouchRect in here?
-
-/*
-      TouchRect tRect = new TouchRect();
-      tRect.Draw( BitGraphic );
-
-
-      WMap.Draw( Sz.Width,
-                 Sz.Height,
-                 BitGraph,
-                 ShowCrossHairs,
-                 UseEqualization,
-                 true, // ShowBottomLegend
-                 ShowCityNames,
-                 ShowNuclear,
-                 ShowNuclearNames,
-                 ShowAirports,
-                 ShowLakes,
-                 //  ShowInterstate,
-                 ShowRoads,
-                 ShowCounties,
-                 ShowRailRoads,
-                 ShowRivers,
-                 ShowRivers2,
-                 ShowStreets,
-                 UseGPSReaderForm,
-                 true );
-*/
-
+      picBoxDrawAr.Draw( BitGraphic );
       }
 
     Image = GraphBitmap;
@@ -126,28 +118,22 @@ class PicBox : PictureBox
     }
 
 
-/*
-======
-      this.PIP1PictureBox.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.PIP1DrawPanel_MouseDoubleClick);
-      this.PIP1PictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.PIP1DrawPanel_MouseDown);
-      this.PIP1PictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.PIP1DrawPanel_MouseMove);
 
   private void PicBoxMouseDown( object sender,
-                               MouseEventArgs e)
+                                MouseEventArgs e)
     {
-
-    MouseDownWasOnPIP = true;
-
     if( e.Button == MouseButtons.Left )
       {
       // These get used for MouseMove too.
       MouseX = e.X;
       MouseY = e.Y;
 
+==== Find which rectangle it clicked.
+Then call an event by name in MainData?
+picBoxDrawAr.
+      }
     }
 
-
-*/
 
 
   }

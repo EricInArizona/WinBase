@@ -8,25 +8,21 @@
 
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
+// using System.IO;
+using System.Windows.Forms;
+// using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 
 
-// namespace
 
-class TouchRect : PicBoxDraw
+// namespace EarthScience
+// {
+
+class PicBoxDraw
   {
-  private int LeftX = 100;
-  private int TopY = 100;
-  private int Width = 500;
-  private int Height = 100;
-
-
-
-  internal override void Draw(
+  internal virtual void Draw(
                           Graphics DrawGraphics )
     {
     Pen MainPen = new Pen( Brushes.White );
@@ -36,16 +32,17 @@ class TouchRect : PicBoxDraw
     MainPen.DashStyle = DashStyle.Solid;
                  // DashDot, DashDotDot, Custom
 
-    DrawGraphics.DrawRectangle( MainPen, LeftX,
-                                TopY, Width,
-                                Height );
+    DrawGraphics.DrawRectangle( MainPen, 100,
+                                100, 300, 200 );
     }
 
 
-  internal override void FreeEverything()
+
+  internal virtual void FreeEverything()
     {
 
     }
+
 
 
   }
