@@ -19,13 +19,20 @@ using System.Drawing.Drawing2D;
 
 class PicBox : PictureBox
   {
+  private MainForm MForm;
   private Bitmap GraphBitmap = null;
   private int MouseX = 0;
   private int MouseY = 0;
   private PicBoxDrawAr picBoxDrawAr;
 
-  internal PicBox()
+  private PicBox()
     {
+    }
+
+
+  internal PicBox( MainForm UseForm )
+    {
+    MForm = UseForm;
     // This has a Width and Height that is set
     // By Dock Fill in the panel.
 
@@ -128,9 +135,16 @@ class PicBox : PictureBox
       MouseX = e.X;
       MouseY = e.Y;
 
-==== Find which rectangle it clicked.
-Then call an event by name in MainData?
-picBoxDrawAr.
+      MForm.ShowStatusForm();
+
+      // string CommandName = picBoxDrawAr.Get 
+      // if( CommandName == "" )
+      // mainCommands.DoCommand( 
+      //               string CommandName,
+      //                int X,
+       //              int Y )
+
+      // picBoxDrawAr.
       }
     }
 

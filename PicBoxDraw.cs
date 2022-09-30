@@ -17,11 +17,17 @@ using System.Drawing.Drawing2D;
 
 
 
-// namespace EarthScience
-// {
-
 class PicBoxDraw
   {
+  private string CommandName = "";
+
+
+  internal string GetCommandName()
+    {
+    return CommandName;
+    }
+
+
   internal virtual void Draw(
                           Graphics DrawGraphics )
     {

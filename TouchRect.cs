@@ -23,7 +23,7 @@ class TouchRect : PicBoxDraw
   private int TopY = 100;
   private int Width = 500;
   private int Height = 100;
-
+  
 
 
   internal override void Draw(
