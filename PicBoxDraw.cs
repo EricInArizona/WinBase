@@ -19,12 +19,19 @@ using System.Drawing.Drawing2D;
 
 class PicBoxDraw
   {
-  private string CommandName = "";
+  protected string CommandName = "";
+  protected string DrawLabel = "";
 
 
   internal string GetCommandName()
     {
     return CommandName;
+    }
+
+
+  internal virtual bool IsInside( int X, int Y )
+    {
+    return false;
     }
 
 

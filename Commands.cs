@@ -18,7 +18,7 @@ using System.Windows.Forms;
 class Commands
   {
 
-  internal virtual void DoCommand( 
+  internal virtual void DoCommand(
                      string CommandName,
                      int X,
                      int Y )
@@ -27,5 +27,3 @@ class Commands
     }
 
   }
-
-

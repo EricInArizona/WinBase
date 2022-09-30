@@ -25,6 +25,7 @@ class PicBox : PictureBox
   private int MouseY = 0;
   private PicBoxDrawAr picBoxDrawAr;
 
+
   private PicBox()
     {
     }
@@ -107,7 +108,7 @@ class PicBox : PictureBox
       if( BitGraphic == null )
         return;
 
-      BitGraphic.Clear( Color.DarkBlue ); // DarkBlue );
+      BitGraphic.Clear( Color.Black ); // DarkBlue );
 
       picBoxDrawAr.Draw( BitGraphic );
       }
@@ -137,14 +138,15 @@ class PicBox : PictureBox
 
       MForm.ShowStatusForm();
 
-      // string CommandName = picBoxDrawAr.Get 
-      // if( CommandName == "" )
-      // mainCommands.DoCommand( 
-      //               string CommandName,
-      //                int X,
-       //              int Y )
+      string CommandName = picBoxDrawAr.
+              GetTouchedCommand( MouseX, MouseY );
 
-      // picBoxDrawAr.
+      // MForm.ShowStatus( "CommandName: " +
+      //                        CommandName );
+
+      MForm.mainData.mainCommands.DoCommand(
+                              CommandName,
+                              MouseX, MouseY );
       }
     }
 

@@ -106,4 +106,26 @@ class PicBoxDrawAr
     }
 
 
+  internal string GetTouchedCommand( int X, int Y )
+    {
+    if( PicBoxDrawArray == null )
+      return "";
+
+    // The later it gets added is what gets
+    // drawn on top.  So look for the first 
+    // matching one that might be above another
+    // lower one.
+    for( int Count = PicBoxLast - 1; 
+                       Count >= 0; Count-- )
+      {
+      if( PicBoxDrawArray[Count].IsInside( X, Y ))
+        return PicBoxDrawArray[Count].
+                              GetCommandName(); 
+      }
+
+    return "";
+    }
+
+
+
   }
