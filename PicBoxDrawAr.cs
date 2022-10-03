@@ -112,15 +112,15 @@ class PicBoxDrawAr
       return "";
 
     // The later it gets added is what gets
-    // drawn on top.  So look for the first 
+    // drawn on top.  So look for the first
     // matching one that might be above another
     // lower one.
-    for( int Count = PicBoxLast - 1; 
+    for( int Count = PicBoxLast - 1;
                        Count >= 0; Count-- )
       {
       if( PicBoxDrawArray[Count].IsInside( X, Y ))
         return PicBoxDrawArray[Count].
-                              GetCommandName(); 
+                              GetCommandName();
       }
 
     return "";

@@ -66,7 +66,7 @@ class TouchRect : PicBoxDraw
   internal override void Draw(
                           Graphics DrawGraphics )
     {
-    Font MainFont = new Font( 
+    Font MainFont = new Font(
                     FontFamily.GenericSansSerif,
                     28.0F,
                     FontStyle.Regular,
@@ -87,7 +87,7 @@ class TouchRect : PicBoxDraw
                                 Height );
 
     DrawGraphics.DrawString( DrawLabel,
-               MainFont, 
+               MainFont,
                FontBrush, LeftX + 3, TopY + 5 );
 
     }
