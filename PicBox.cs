@@ -144,9 +144,11 @@ class PicBox : PictureBox
       // MForm.ShowStatus( "CommandName: " +
       //                        CommandName );
 
+/*
       MForm.mainData.mainCommands.DoCommand(
                               CommandName,
                               MouseX, MouseY );
+*/
       }
     }
 

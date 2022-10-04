@@ -29,7 +29,7 @@ class TabBox : TabControl
     Dock = System.Windows.Forms.DockStyle.Fill;
 
     // Items.
-    // Items.Add( 
+    // Items.Add(
     // SelectedIndex
 
     TabPage1 = new TabPage( "Tab 1");
@@ -58,7 +58,12 @@ class TabBox : TabControl
     StatTextBox.Dock = DockStyle.Fill;
     // StatTextBox.MaxLength = 6000;
     StatTextBox.Multiline = true;
-
+/*
+=====
+I need to add TabPages from outside of this
+class.
+And get rid of StatusForm.
+*/
     TabPage1.Controls.Add( StatTextBox );
 
     TabPage1.Dock = DockStyle.Fill;
@@ -71,7 +76,7 @@ class TabBox : TabControl
     TabPages.Add( TabPage1 );
     TabPages.Add( TabPage2 );
     TabPages.Add( TabPage3 );
- 
+
 
     SelectedIndex = 0;
 
