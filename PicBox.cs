@@ -136,7 +136,7 @@ class PicBox : PictureBox
       MouseX = e.X;
       MouseY = e.Y;
 
-      MForm.ShowStatusForm();
+      // MForm.ShowStatusForm();
 
       string CommandName = picBoxDrawAr.
               GetTouchedCommand( MouseX, MouseY );

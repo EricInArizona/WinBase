@@ -16,26 +16,28 @@ using System.Windows.Forms;
 
 class TabBox : TabControl
   {
-  // private MainForm MForm;
-  private TabPage TabPage1;
+  private MainFormBase MForm;
   private TabPage TabPage2;
   private TabPage TabPage3;
-  private TextBox StatTextBox;
   private Font MainFont;
 
 
-  internal TabBox()
+  private TabBox()
     {
+    }
+
+
+  internal TabBox( MainFormBase UseForm )
+    {
+    MForm = UseForm;
     Dock = System.Windows.Forms.DockStyle.Fill;
 
     // Items.
     // Items.Add(
     // SelectedIndex
 
-    TabPage1 = new TabPage( "Tab 1");
     TabPage2 = new TabPage( "Tab two" );
     TabPage3 = new TabPage( "Tab Three" );
-    StatTextBox = new TextBox();
     MainFont = new Font(
                "Microsoft Sans Serif", 28,
                FontStyle.Regular,
@@ -48,32 +50,16 @@ class TabBox : TabControl
   void InitComponents()
     {
     Font = MainFont;
-    StatTextBox.Font = MainFont;
 
-    TabPage1.Font = MainFont;
     TabPage2.Font = MainFont;
     TabPage3.Font = MainFont;
-    StatTextBox.Font = MainFont;
-    StatTextBox.Text = "Testing...";
-    StatTextBox.Dock = DockStyle.Fill;
-    // StatTextBox.MaxLength = 6000;
-    StatTextBox.Multiline = true;
-/*
-=====
-I need to add TabPages from outside of this
-class.
-And get rid of StatusForm.
-*/
-    TabPage1.Controls.Add( StatTextBox );
 
-    TabPage1.Dock = DockStyle.Fill;
 
     // TabPages is a TabPageCollection class.
 
     // TabPages.Count
     // TabPages.Clear();
 
-    TabPages.Add( TabPage1 );
     TabPages.Add( TabPage2 );
     TabPages.Add( TabPage3 );
 
@@ -81,6 +67,13 @@ And get rid of StatusForm.
     SelectedIndex = 0;
 
     }
+
+
+  internal void AddTabPage( TabPage toAdd )
+    {
+    TabPages.Add( toAdd );
+    }
+
 
 
 /*

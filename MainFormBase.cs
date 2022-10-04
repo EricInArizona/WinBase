@@ -33,7 +33,25 @@ public class MainFormBase : Form
   protected int VersionNumber = 10; // 1.0
   protected string MainDataDirectory = "";
   protected string MessageBoxTitle = "";
+  protected bool Cancelled = false;
+  protected bool ShuttingDown = false;
+
   internal Commands commands;
+  protected Font MainFont;
+
+
+
+  internal bool GetShuttingDown()
+    {
+    return ShuttingDown;
+    }
+
+
+  internal Font GetMainFont()
+    {
+    return MainFont;
+    }
+
 
 
   internal string GetMainDataDirectory()
