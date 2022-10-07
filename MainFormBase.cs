@@ -75,7 +75,5 @@ public class MainFormBase : Form
     return MessageBoxTitle;
     }
 
-  internal virtual void ShowStatus( string line )
-    {
-    }
+
   }

@@ -17,8 +17,6 @@ using System.Windows.Forms;
 class TabBox : TabControl
   {
   private MainFormBase MForm;
-  private TabPage TabPage2;
-  private TabPage TabPage3;
   private Font MainFont;
 
 
@@ -36,10 +34,8 @@ class TabBox : TabControl
     // Items.Add(
     // SelectedIndex
 
-    TabPage2 = new TabPage( "Tab two" );
-    TabPage3 = new TabPage( "Tab Three" );
     MainFont = new Font(
-               "Microsoft Sans Serif", 28,
+               "Microsoft Sans Serif", 38,
                FontStyle.Regular,
                GraphicsUnit.Pixel );
 
@@ -51,21 +47,13 @@ class TabBox : TabControl
     {
     Font = MainFont;
 
-    TabPage2.Font = MainFont;
-    TabPage3.Font = MainFont;
-
 
     // TabPages is a TabPageCollection class.
 
     // TabPages.Count
     // TabPages.Clear();
 
-    TabPages.Add( TabPage2 );
-    TabPages.Add( TabPage3 );
-
-
     SelectedIndex = 0;
-
     }
 
 

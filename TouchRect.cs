@@ -68,7 +68,7 @@ class TouchRect : PicBoxDraw
     {
     Font MainFont = new Font(
                     FontFamily.GenericSansSerif,
-                    28.0F,
+                    38.0F,
                     FontStyle.Regular,
                     GraphicsUnit.Pixel );
 
@@ -88,7 +88,7 @@ class TouchRect : PicBoxDraw
 
     DrawGraphics.DrawString( DrawLabel,
                MainFont,
-               FontBrush, LeftX + 3, TopY + 5 );
+               FontBrush, LeftX + 4, TopY + 6 );
 
     }
 

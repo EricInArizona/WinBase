@@ -141,14 +141,10 @@ class PicBox : PictureBox
       string CommandName = picBoxDrawAr.
               GetTouchedCommand( MouseX, MouseY );
 
-      // MForm.ShowStatus( "CommandName: " +
-      //                        CommandName );
-
-/*
-      MForm.mainData.mainCommands.DoCommand(
+      MForm.commands.DoCommand(
                               CommandName,
                               MouseX, MouseY );
-*/
+
       }
     }
 

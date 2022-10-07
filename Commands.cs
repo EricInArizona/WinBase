@@ -7,9 +7,6 @@
 // https://www.gnu.org/licenses/gpl-3.0.html
 
 
-// https://www.usgs.gov/the-national-map-data-delivery/gis-data-download
-
-
 using System;
 using System.IO;
 using System.Windows.Forms;
