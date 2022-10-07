@@ -20,28 +20,21 @@ using System.Collections;
 
 
 
-class WinTlsClient
+class TlsSocket
   {
-  private MainFormBase MForm;
   private SslStream tlsStream;
   private TcpClient tcpClient;
+  private StringBuilder StatusBld;
 
   private static Hashtable certificateErrors =
                                     new Hashtable();
 
 
 
-  private WinTlsClient()
+  internal TlsSocket()
     {
+    StatusBld = new StringBuilder();
     }
-
-
-  internal WinTlsClient( MainFormBase UseForm )
-    {
-    MForm = UseForm;
-
-    }
-
 
 
 
@@ -53,12 +46,12 @@ class WinTlsClient
               X509Chain chain,
               SslPolicyErrors sslPolicyErrors )
     {
+    // What is in the certificate?
+    // StatusBld.Append( something );
+
     if( sslPolicyErrors == SslPolicyErrors.None )
       return true;
 
-==== I can't call the super class from here.
-Make this just return strings.
-No MForm needed.
     // MForm.ShowStatus( "Certificate error: " );
     // , sslPolicyErrors);
 
@@ -72,16 +65,11 @@ No MForm needed.
   internal bool Connect(
         string machineName, string serverName)
     {
-    // Create a TCP/IP client socket.
-    // machineName is the host running the
-    // server application.
     tcpClient = new TcpClient( machineName,
                                5000 );
     // Is it connected?
     // Console.WriteLine("Client connected.");
 
-    // Create an SSL stream that will close
-    //  the client's stream.
     tlsStream = new SslStream(
                 tcpClient.GetStream(),
                 false,
@@ -91,8 +79,6 @@ No MForm needed.
                 null
                 );
 
-    // The server name must match the name
-    // on the server certificate.
     try
     {
     tlsStream.AuthenticateAsClient( serverName );
