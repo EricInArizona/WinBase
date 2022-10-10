@@ -23,4 +23,10 @@ class Commands
 
     }
 
+
+  internal virtual void FreeEverything()
+    {
+
+    }
+
   }

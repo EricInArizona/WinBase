@@ -156,6 +156,14 @@ class TlsSocket
 
 
 
+  internal void FreeEverything()
+    {
+    tcpClient.Close();
+    tlsStream.Close();
+    }
+
+
+
 /*
    private static void DisplayUsage()
         {
