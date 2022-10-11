@@ -35,7 +35,7 @@ public class MainFormBase : Form
   protected string MessageBoxTitle = "";
   protected bool Cancelled = false;
   protected bool ShuttingDown = false;
-
+  // protected Configure mainConfigure;
   internal Commands commands;
   protected Font MainFont;
 

@@ -16,6 +16,10 @@ using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 
 
+// Draw on a bitmap and then pass it to the
+// PictureBox so it doesn't flicker.
+
+
 
 class PicBox : PictureBox
   {

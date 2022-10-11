@@ -14,6 +14,11 @@ using System.IO;
 using System.Windows.Forms;
 
 
+
+// This is a property of the tab page.
+   //  if( SoAndSoTabPage.Visible )
+
+
 class TPageText : TabPage
   {
   private MainFormBase MForm;
@@ -58,6 +63,10 @@ class TPageText : TabPage
     //                    MainTextBox_KeyUp );
 
     this.Controls.Add( MainTextBox );
+
+    this.Enter += new System.
+        EventHandler( TPageText_Enter );
+
     }
 
 
@@ -186,6 +195,13 @@ class TPageText : TabPage
       }
     }
 
+
+
+  private void TPageText_Enter( object sender,
+                                EventArgs e )
+    {
+    MainTextBox.Select();
+    }
 
 
   }

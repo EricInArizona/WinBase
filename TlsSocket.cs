@@ -37,30 +37,33 @@ class TlsSocket
     }
 
 
+  internal string GetStatus()
+    {
+    string lines = StatusBld.ToString();
+    StatusBld.Clear();
+    return lines;
+    }
 
-  // The following method is invoked by the
-  // RemoteCertificateValidationDelegate.
+
+
   public static bool ValidateServerCertificate(
               object sender,
               X509Certificate certificate,
               X509Chain chain,
               SslPolicyErrors sslPolicyErrors )
     {
-    return false;
-    /*
     // What is in the certificate?
-    // StatusBld.Append( something );
+    // Since this is a static function I need
+    // to save it to a file.
+    string certS = certificate.ToString();
 
     if( sslPolicyErrors == SslPolicyErrors.None )
       return true;
 
-    // MForm.ShowStatus( "Certificate error: " );
+    // ( "Certificate error: " );
     // , sslPolicyErrors);
 
-    // Do not allow this client to communicate
-    // with unauthenticated servers.
     return false;
-    */
     }
 
 
@@ -73,7 +76,7 @@ class TlsSocket
       {
       if( tcpClient.Connected )
         {
-        StatusBld.Append( 
+        StatusBld.Append(
                  "It is already connected.\r\n" );
         return true;
         }
@@ -89,15 +92,14 @@ class TlsSocket
 
     if( !tcpClient.Connected )
       {
-      StatusBld.Append( 
+      StatusBld.Append(
                  "Could not connect.\r\n" );
       return false;
       }
 
-    StatusBld.Append( 
+    StatusBld.Append(
                  "It is connected.\r\n" );
 
-/*
     tlsStream = new SslStream(
                 tcpClient.GetStream(),
                 false,
@@ -113,25 +115,26 @@ class TlsSocket
     }
     catch (AuthenticationException e)
       {
-      // Console.WriteLine("Exception: {0}",
-      // e.Message);
+      StatusBld.Append( "Exception: " +
+                     e.Message + "\r\n" );
       if( e.InnerException != null )
         {
-        // Console.WriteLine("Inner exception:
-        //  {0}", e.InnerException.Message);
+        StatusBld.Append( "Inner Exception: " +
+                     e.InnerException.Message +
+                     "\r\n" );
+
         }
 
-      // Console.WriteLine ("Authentication
-      //  failed - closing the connection.");
-      tcpClient.Dispose(); // Closes it too.
-      tcpClient = null;
-
+      FreeEverything();
       return false;
       }
-*/
+
+
+    StatusBld.Append( "TLS is connected.\r\n" );
 
     return true; // It is connected now.
     }
+
 
 
 
@@ -222,68 +225,37 @@ if something is null...
 
 
 
-
-/*
-   private static void DisplayUsage()
-        {
-            Console.WriteLine("To start the client specify:");
-            Console.WriteLine("clientSync machineName [serverName]");
-            Environment.Exit(1);
-        }
-
-
-
-        public static int Main(string[] args)
-        {
-            string serverCertificateName = null;
-            string machineName = null;
-            if (args == null ||args.Length <1 )
-            {
-                DisplayUsage();
-            }
-            // User can specify the machine name and server name.
-            // Server name must match the name on the server's certificate.
-            machineName = args[0];
-            if (args.Length <2 )
-            {
-                serverCertificateName = machineName;
-            }
-            else
-            {
-                serverCertificateName = args[1];
-            }
-            SslTcpClient.RunClient (machineName, serverCertificateName);
-            return 0;
-        }
-    }
-*/
-
-
-
-
-
-
 /*
 
 namespace Examples.System.Net
 {
     public sealed class SslTcpServer
     {
-        static X509Certificate serverCertificate = null;
-        // The certificate parameter specifies the name of the file
+        static X509Certificate serverCertificate =
+ null;
+        // The certificate parameter specifies
+ the name of the file
         // containing the machine certificate.
-        public static void RunServer(string certificate)
+        public static void RunServer(string
+ certificate)
         {
-            serverCertificate = X509Certificate.CreateFromCertFile(certificate);
-            // Create a TCP/IP (IPv4) socket and listen for incoming connections.
-            TcpListener listener = new TcpListener(IPAddress.Any, 5000);
+            serverCertificate = 
+X509Certificate.CreateFromCertFile(certificate);
+            // Create a TCP/IP (IPv4) socket and
+ listen for incoming connections.
+            TcpListener listener = new
+ TcpListener(IPAddress.Any, 5000);
             listener.Start();
             while (true)
             {
-                Console.WriteLine("Waiting for a client to connect...");
-                // Application blocks while waiting for an incoming connection.
-                // Type CNTL-C to terminate the server.
-                TcpClient client = listener.AcceptTcpClient();
+                Console.WriteLine("Waiting for 
+a client to connect...");
+                // Application blocks while
+ waiting for an incoming connection.
+                // Type CNTL-C to terminate the
+ server.
+                TcpClient client =
+ listener.AcceptTcpClient();
                 ProcessClient(client);
             }
         }
@@ -291,76 +263,104 @@ namespace Examples.System.Net
         static void ProcessClient (TcpClient client)
         {
             // A client has connected. Create the
-            // SslStream using the client's network stream.
+            // SslStream using the client's
+ network stream.
             SslStream sslStream = new SslStream(
                 client.GetStream(), false);
-            // Authenticate the server but don't require the client to authenticate.
+            // Authenticate the server but don't
+ require the client to authenticate.
             try
             {
-                sslStream.AuthenticateAsServer(serverCertificate, clientCertificateRequired: false, checkCertificateRevocation: true);
+                sslStream.AuthenticateAsServer(
+serverCertificate, clientCertificateRequired:
+ false, checkCertificateRevocation: true);
 
-                // Display the properties and settings for the authenticated stream.
+        // Display the properties and settings
+ for the authenticated stream.
                 DisplaySecurityLevel(sslStream);
                 DisplaySecurityServices(sslStream);
-                DisplayCertificateInformation(sslStream);
+                DisplayCertificateInformation(
+sslStream);
                 DisplayStreamProperties(sslStream);
 
-                // Set timeouts for the read and write to 5 seconds.
+                // Set timeouts for the read and
+ write to 5 seconds.
                 sslStream.ReadTimeout = 5000;
                 sslStream.WriteTimeout = 5000;
                 // Read a message from the client.
-                Console.WriteLine("Waiting for client message...");
-                string messageData = ReadMessage(sslStream);
-                Console.WriteLine("Received: {0}", messageData);
+                Console.WriteLine("Waiting for
+ client message...");
+                string messageData = ReadMessage(
+sslStream);
+                Console.WriteLine("Received: {0}",
+ messageData);
 
                 // Write a message to the client.
-                byte[] message = Encoding.UTF8.GetBytes("Hello from the server.<EOF>");
-                Console.WriteLine("Sending hello message.");
+                byte[] message = Encoding.UTF8.
+GetBytes("Hello from the server.<EOF>");
+                Console.WriteLine("Sending hello
+ message.");
                 sslStream.Write(message);
             }
             catch (AuthenticationException e)
             {
-                Console.WriteLine("Exception: {0}", e.Message);
+                Console.WriteLine("Exception: {0}",
+ e.Message);
                 if (e.InnerException != null)
                 {
-                    Console.WriteLine("Inner exception: {0}", e.InnerException.Message);
+                    Console.WriteLine(
+"Inner exception: {0}", e.InnerException.Message);
                 }
-                Console.WriteLine ("Authentication failed - closing the connection.");
+                Console.WriteLine (
+"Authentication failed - closing the connection.");
                 sslStream.Close();
                 client.Close();
                 return;
             }
             finally
             {
-                // The client stream will be closed with the sslStream
-                // because we specified this behavior when creating
+                // The client stream will be
+ closed with the sslStream
+                // because we specified this
+ behavior when creating
                 // the sslStream.
                 sslStream.Close();
                 client.Close();
             }
         }
 
-        static string ReadMessage(SslStream sslStream)
+        static string ReadMessage(
+SslStream sslStream)
         {
             // Read the  message sent by the client.
-            // The client signals the end of the message using the
+            // The client signals the end of
+ the message using the
             // "<EOF>" marker.
             byte [] buffer = new byte[2048];
-            StringBuilder messageData = new StringBuilder();
+            StringBuilder messageData = new
+ StringBuilder();
             int bytes = -1;
             do
             {
                 // Read the client's test message.
-                bytes = sslStream.Read(buffer, 0, buffer.Length);
+                bytes = sslStream.Read(buffer, 0,
+ buffer.Length);
 
-                // Use Decoder class to convert from bytes to UTF8
-                // in case a character spans two buffers.
-                Decoder decoder = Encoding.UTF8.GetDecoder();
-                char[] chars = new char[decoder.GetCharCount(buffer,0,bytes)];
-                decoder.GetChars(buffer, 0, bytes, chars,0);
+                // Use Decoder class to convert
+ from bytes to UTF8
+                // in case a character spans
+ two buffers.
+                Decoder decoder = Encoding.UTF8.
+GetDecoder();
+                char[] chars = new char[
+decoder.GetCharCount(buffer,0,bytes)];
+                decoder.GetChars(buffer, 0, bytes,
+ chars,0);
                 messageData.Append (chars);
-                // Check for EOF or an empty message.
-                if (messageData.ToString().IndexOf("<EOF>") != -1)
+                // Check for EOF or an
+ empty message.
+                if (messageData.ToString().
+IndexOf("<EOF>") != -1)
                 {
                     break;
                 }
@@ -369,59 +369,90 @@ namespace Examples.System.Net
             return messageData.ToString();
         }
 
-         static void DisplaySecurityLevel(SslStream stream)
+         static void DisplaySecurityLevel(
+SslStream stream)
          {
-            Console.WriteLine("Cipher: {0} strength {1}", stream.CipherAlgorithm, stream.CipherStrength);
-            Console.WriteLine("Hash: {0} strength {1}", stream.HashAlgorithm, stream.HashStrength);
-            Console.WriteLine("Key exchange: {0} strength {1}", stream.KeyExchangeAlgorithm, stream.KeyExchangeStrength);
-            Console.WriteLine("Protocol: {0}", stream.SslProtocol);
+            Console.WriteLine("Cipher: {0}
+ strength {1}", stream.CipherAlgorithm,
+ stream.CipherStrength);
+            Console.WriteLine("Hash: {0} strength
+ {1}", stream.HashAlgorithm, stream.HashStrength);
+            Console.WriteLine("Key exchange:
+ {0} strength {1}", stream.KeyExchangeAlgorithm,
+ stream.KeyExchangeStrength);
+            Console.WriteLine("Protocol: {0}",
+ stream.SslProtocol);
          }
-         static void DisplaySecurityServices(SslStream stream)
+         static void DisplaySecurityServices(
+SslStream stream)
          {
-            Console.WriteLine("Is authenticated: {0} as server? {1}", stream.IsAuthenticated, stream.IsServer);
-            Console.WriteLine("IsSigned: {0}", stream.IsSigned);
-            Console.WriteLine("Is Encrypted: {0}", stream.IsEncrypted);
+            Console.WriteLine("Is authenticated:
+ {0} as server? {1}", stream.IsAuthenticated,
+ stream.IsServer);
+            Console.WriteLine("IsSigned: {0}",
+ stream.IsSigned);
+            Console.WriteLine("Is Encrypted: {0}",
+ stream.IsEncrypted);
          }
 
-         static void DisplayStreamProperties(SslStream stream)
+         static void DisplayStreamProperties(
+SslStream stream)
          {
-            Console.WriteLine("Can read: {0}, write {1}", stream.CanRead, stream.CanWrite);
-            Console.WriteLine("Can timeout: {0}", stream.CanTimeout);
+            Console.WriteLine("Can read: {0},
+ write {1}", stream.CanRead, stream.CanWrite);
+            Console.WriteLine("Can timeout:
+ {0}", stream.CanTimeout);
          }
 
-        static void DisplayCertificateInformation(SslStream stream)
+        static void DisplayCertificateInformation(
+SslStream stream)
         {
-            Console.WriteLine("Certificate revocation list checked: {0}", stream.CheckCertRevocationStatus);
+            Console.WriteLine("Certificate 
+revocation list checked: {0}", stream.
+CheckCertRevocationStatus);
 
-            X509Certificate localCertificate = stream.LocalCertificate;
+            X509Certificate localCertificate =
+ stream.LocalCertificate;
             if (stream.LocalCertificate != null)
             {
-                Console.WriteLine("Local cert was issued to {0} and is valid from {1} until {2}.",
+                Console.WriteLine("Local cert
+ was issued to {0} and is valid from {1}
+ until {2}.",
                     localCertificate.Subject,
-                    localCertificate.GetEffectiveDateString(),
-                    localCertificate.GetExpirationDateString());
-             } else
+         localCertificate.GetEffectiveDateString(),
+         localCertificate.GetExpirationDateString());
+         } else
             {
-                Console.WriteLine("Local certificate is null.");
+                Console.WriteLine(
+"Local certificate is null.");
             }
-            // Display the properties of the client's certificate.
-            X509Certificate remoteCertificate = stream.RemoteCertificate;
+            // Display the properties of the
+ client's certificate.
+            X509Certificate remoteCertificate =
+ stream.RemoteCertificate;
             if (stream.RemoteCertificate != null)
             {
-            Console.WriteLine("Remote cert was issued to {0} and is valid from {1} until {2}.",
+            Console.WriteLine(
+"Remote cert was issued to {0} and is valid
+ from {1} until {2}.",
                 remoteCertificate.Subject,
-                remoteCertificate.GetEffectiveDateString(),
-                remoteCertificate.GetExpirationDateString());
+                remoteCertificate.
+GetEffectiveDateString(),
+                remoteCertificate.
+GetExpirationDateString());
             } else
             {
-                Console.WriteLine("Remote certificate is null.");
+                Console.WriteLine(
+"Remote certificate is null.");
             }
         }
 
         private static void DisplayUsage()
         {
-            Console.WriteLine("To start the server specify:");
-            Console.WriteLine("serverSync certificateFile.cer");
+            Console.WriteLine("To start the
+ server specify:");
+            Console.WriteLine("serverSync 
+certificateFile.cer");
             Environment.Exit(1);
         }
 
