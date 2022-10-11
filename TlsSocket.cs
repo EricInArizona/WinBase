@@ -22,9 +22,9 @@ using System.Collections;
 
 class TlsSocket
   {
-  private SslStream tlsStream;
-  private TcpClient tcpClient;
-  private StringBuilder StatusBld;
+  private SslStream tlsStream = null;
+  private TcpClient tcpClient = null;
+  private StringBuilder StatusBld = null;
 
   private static Hashtable certificateErrors =
                                     new Hashtable();
@@ -46,6 +46,8 @@ class TlsSocket
               X509Chain chain,
               SslPolicyErrors sslPolicyErrors )
     {
+    return false;
+    /*
     // What is in the certificate?
     // StatusBld.Append( something );
 
@@ -58,18 +60,44 @@ class TlsSocket
     // Do not allow this client to communicate
     // with unauthenticated servers.
     return false;
+    */
     }
 
 
 
-  internal bool Connect(
-        string machineName, string serverName)
+  internal bool Connect( string machineName,
+                         string serverName,
+                         int PortNumber )
     {
-    tcpClient = new TcpClient( machineName,
-                               5000 );
-    // Is it connected?
-    // Console.WriteLine("Client connected.");
+    if( tcpClient != null )
+      {
+      if( tcpClient.Connected )
+        {
+        StatusBld.Append( 
+                 "It is already connected.\r\n" );
+        return true;
+        }
 
+      FreeEverything();
+      }
+
+    // The constructor will make it try
+    // to connect.
+    tcpClient = new TcpClient( machineName,
+                               PortNumber );
+    // Port is 443 for https.
+
+    if( !tcpClient.Connected )
+      {
+      StatusBld.Append( 
+                 "Could not connect.\r\n" );
+      return false;
+      }
+
+    StatusBld.Append( 
+                 "It is connected.\r\n" );
+
+/*
     tlsStream = new SslStream(
                 tcpClient.GetStream(),
                 false,
@@ -95,10 +123,20 @@ class TlsSocket
 
       // Console.WriteLine ("Authentication
       //  failed - closing the connection.");
-      tcpClient.Close();
+      tcpClient.Dispose(); // Closes it too.
+      tcpClient = null;
+
       return false;
       }
+*/
 
+    return true; // It is connected now.
+    }
+
+
+
+/*
+This is a sendMessage function.
     // Encode a test message into a byte array.
     // Signal the end of the message using the
     // "<EOF>".
@@ -114,16 +152,23 @@ class TlsSocket
     // Console.WriteLine("Server says: {0}",
     //  serverMessage);
     // Close the client connection.
-    tcpClient.Close();
+    tcpClient.Close( 10 );
+    Dispose of it too.
     //   Console.WriteLine("Client closed.");
+
 
     return true;
     }
+*/
+
 
 
 
   string ReadMessage( SslStream sslStream )
     {
+/*
+if something is null...
+
     // Read the  message sent by the server.
     // The end of the message is signaled using the
     // "<EOF>" marker.
@@ -132,35 +177,49 @@ class TlsSocket
     int bytes = -1;
     do
       {
-       bytes = sslStream.Read( buffer, 0,
+      bytes = sslStream.Read( buffer, 0,
                               buffer.Length );
 
-       // Use Decoder class to convert from
-       // bytes to UTF8
-       // in case a character spans two buffers.
-       Decoder decoder = Encoding.UTF8.GetDecoder();
-       char[] chars = new char[decoder.
+      // Use Decoder class to convert from
+      // bytes to UTF8
+      // in case a character spans two buffers.
+      Decoder decoder = Encoding.UTF8.GetDecoder();
+      char[] chars = new char[decoder.
                   GetCharCount(buffer,0,bytes)];
-       decoder.GetChars(buffer, 0, bytes, chars,0);
-       messageData.Append (chars);
-       // Check for EOF.
-       if( messageData.ToString().IndexOf("<EOF>")
+      decoder.GetChars(buffer, 0, bytes, chars,0);
+      messageData.Append (chars);
+      // Check for EOF.
+      if( messageData.ToString().IndexOf("<EOF>")
                        != -1)
-         {
-         break;
-         }
-       } while (bytes != 0);
+        {
+        break;
+        }
+      } while (bytes != 0);
 
-     return messageData.ToString();
-     }
+    return messageData.ToString();
+*/
+    return "";
+    }
 
 
 
   internal void FreeEverything()
     {
-    tcpClient.Close();
-    tlsStream.Close();
+    if( tlsStream != null )
+      {
+      tlsStream.Close();
+      tlsStream.Dispose();
+      tlsStream = null;
+      }
+
+    if( tcpClient != null )
+      {
+      tcpClient.Close();
+      tcpClient.Dispose();
+      tcpClient = null;
+      }
     }
+
 
 
 
