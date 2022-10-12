@@ -17,6 +17,7 @@ using System.Security.Authentication;
 using System.Text;
 using System.Security.Cryptography.X509Certificates;
 using System.Collections;
+// using System.Threading;
 
 
 
@@ -25,6 +26,9 @@ class TlsSocket
   private SslStream tlsStream = null;
   private TcpClient tcpClient = null;
   private StringBuilder StatusBld = null;
+  private IAsyncResult AsyncResult = null;
+
+
 
   private static Hashtable certificateErrors =
                                     new Hashtable();
@@ -97,8 +101,13 @@ class TlsSocket
       return false;
       }
 
+    tcpClient.ReceiveBufferSize = 1024 * 16;
+
     StatusBld.Append(
                  "It is connected.\r\n" );
+
+    tcpClient.ReceiveTimeout = 5 * 1000;
+    tcpClient.SendTimeout = 5 * 1000;
 
     tlsStream = new SslStream(
                 tcpClient.GetStream(),
@@ -129,7 +138,6 @@ class TlsSocket
       return false;
       }
 
-
     StatusBld.Append( "TLS is connected.\r\n" );
 
     return true; // It is connected now.
@@ -137,72 +145,217 @@ class TlsSocket
 
 
 
+  internal bool SendAsciiByteBuf( ByteBuf byteBuf )
 
-/*
-This is a sendMessage function.
-    // Encode a test message into a byte array.
-    // Signal the end of the message using the
-    // "<EOF>".
-    byte[] messsage = Encoding.UTF8.GetBytes(
-           "Hello from the client.<EOF>");
-    // Send hello message to the server.
-    tlsStream.Write( messsage );
+    {
+    if( tlsStream == null )
+      return false;
+
+    // byte[] messsage = Encoding.UTF8.GetBytes(
+     //                        "Hello...");
+    byte[] ToSend = byteBuf.GetByteArray();
+
+    tlsStream.Write( ToSend );
     tlsStream.Flush();
-
-    // Read message from the server.
-    string serverMessage = ReadMessage(
-                                 tlsStream );
-    // Console.WriteLine("Server says: {0}",
-    //  serverMessage);
-    // Close the client connection.
-    tcpClient.Close( 10 );
-    Dispose of it too.
-    //   Console.WriteLine("Client closed.");
-
 
     return true;
     }
+
+
+
+  // What is my most recent UTF8 code?
+
+
+
+
+  internal bool IsProcessingInBackground()
+    {
+    if( tcpClient == null )
+      return false;
+
+    // AsyncResult doesn't get created unless
+    // an Async transfer gets started.
+    if( AsyncResult == null )
+      return false;
+
+    // This is checked whenever it checks to see
+    // if it is shut down, which is very often.
+    if( AsyncResult.IsCompleted )
+      {
+      AsyncResult = null;
+      // Then give it time before it gets shut down.
+      // LastTransactTime.SetToNow();
+      return false;
+      }
+
+    return true;
+    }
+
+
+
+  internal bool IsShutDown()
+    {
+    if( tcpClient == null )
+      return true;
+
+    if( IsProcessingInBackground())
+      return false;
+
+    // This only knows if it's connected as of
+    // the last socket operation.
+    if( !tcpClient.Connected )
+      {
+      FreeEverything();
+      return true;
+      }
+
+    return false;
+    }
+
+
+
+
+  private int GetAvailable()
+    {
+    if( IsShutDown())
+      return 0;
+
+    try
+    {
+    return tcpClient.Available;
+    }
+    catch( Exception )
+      {
+      FreeEverything();
+      return 0;
+      }
+    }
+
+
+
+
+/*
+  internal bool WriteBytesAsync( byte[] Bytes )
+    {
+    if( IsShutDown())
+      return false;
+
+    // This can only be called once.
+    if( AsyncResult != null )
+      {
+      MForm.ShowListenerFormStatus( "AsyncResult != null in WriteBytesAsync." );
+      return false;
+      }
+
+    if( NetStream == null )
+      return false;
+
+    // This just means it's a writeable stream.  It's not a test
+    // for the write buffer being ready to write.
+    // if( NetStream.CanWrite )
+
+    try
+    {
+    AsyncResult = NetStream.BeginWrite( Bytes,
+                  0,
+                  Bytes.Length,
+                  new AsyncCallback( BasicTCPClient.ProcessAsynchCallback ),
+                  NetStream );
+
+    LastTransactTime.SetToNow();
+    return true;
+
+    }
+    catch( Exception Except )
+      {
+      MForm.ShowListenerFormStatus( "Exception in WriteBytesAsync." );
+      MForm.ShowListenerFormStatus( Except.Message );
+      FreeEverything();
+      return false;
+      }
+    }
+
+
+
+
+  static void ProcessAsynchCallback( IAsyncResult Result )
+    {
+    // The Async send is done only once, then it closes the socket.
+    // But Result.AsyncState is the NetworkStream passed to BeginWrite.
+
+    try
+    {
+    NetworkStream TheStream = (NetworkStream)(Result.AsyncState);
+    // The EndWrite method blocks (in another thread) until the bytes
+    // are sent.
+    // Did it send all the bytes?
+    TheStream.EndWrite( Result );
+    }
+    catch( Exception )
+      {
+      // This is static.
+      // ErrorString += "The socket got closed, or it couldn't write to it, etc.\r\n";
+      }
+    }
 */
 
 
 
-
-  string ReadMessage( SslStream sslStream )
+  internal string ReadAsciiString()
     {
-/*
-if something is null...
+    if( tlsStream == null )
+      return "";
 
-    // Read the  message sent by the server.
-    // The end of the message is signaled using the
-    // "<EOF>" marker.
-    byte [] buffer = new byte[2048];
-    StringBuilder messageData = new StringBuilder();
-    int bytes = -1;
-    do
-      {
-      bytes = sslStream.Read( buffer, 0,
+    if( GetAvailable() < 1 )
+      return "";
+
+    // This might be reading only one outer
+    // block at a time.  Or something.
+    byte [] buffer = new byte[1024 * 16];
+    StringBuilder SBuilder = new StringBuilder();
+
+    // This will block if there is nothing
+    // to read.
+    int bytes = tlsStream.Read( buffer, 0,
                               buffer.Length );
 
-      // Use Decoder class to convert from
-      // bytes to UTF8
-      // in case a character spans two buffers.
-      Decoder decoder = Encoding.UTF8.GetDecoder();
-      char[] chars = new char[decoder.
-                  GetCharCount(buffer,0,bytes)];
-      decoder.GetChars(buffer, 0, bytes, chars,0);
-      messageData.Append (chars);
-      // Check for EOF.
-      if( messageData.ToString().IndexOf("<EOF>")
-                       != -1)
-        {
-        break;
-        }
-      } while (bytes != 0);
-
-    return messageData.ToString();
+/*
+=====
+    public override IAsyncResult BeginRead(
+byte[] buffer, 0, ReadBuffer.Length,
+ AsyncCallback? asyncCallback, object? asyncState );
 */
-    return "";
+
+
+    StatusBld.Append( "Bytes: " + bytes );
+
+    if( bytes < 1 )
+      return "";
+
+    // Decoder decoder = Encoding.UTF8.GetDecoder();
+    //  char[] chars = new char[decoder.
+    //           GetCharCount(buffer,0,bytes)];
+    //  decoder.GetChars(buffer, 0, bytes, chars,0);
+
+    int max = bytes;
+    // if( max > 2000 )
+      // max = 2000;
+
+    for( int Count = 0; Count < max; Count++ )
+      {
+      char letter = (char)buffer[Count];
+      if( letter < 10 )
+        continue;
+
+      if( letter > 126 )
+        continue;
+
+      SBuilder.Append( (char)buffer[Count] );
+      }
+
+    return SBuilder.ToString();
     }
+
 
 
 
@@ -239,7 +392,7 @@ namespace Examples.System.Net
         public static void RunServer(string
  certificate)
         {
-            serverCertificate = 
+            serverCertificate =
 X509Certificate.CreateFromCertFile(certificate);
             // Create a TCP/IP (IPv4) socket and
  listen for incoming connections.
@@ -248,7 +401,7 @@ X509Certificate.CreateFromCertFile(certificate);
             listener.Start();
             while (true)
             {
-                Console.WriteLine("Waiting for 
+                Console.WriteLine("Waiting for
 a client to connect...");
                 // Application blocks while
  waiting for an incoming connection.
@@ -407,7 +560,7 @@ SslStream stream)
         static void DisplayCertificateInformation(
 SslStream stream)
         {
-            Console.WriteLine("Certificate 
+            Console.WriteLine("Certificate
 revocation list checked: {0}", stream.
 CheckCertRevocationStatus);
 
@@ -451,7 +604,7 @@ GetExpirationDateString());
         {
             Console.WriteLine("To start the
  server specify:");
-            Console.WriteLine("serverSync 
+            Console.WriteLine("serverSync
 certificateFile.cer");
             Environment.Exit(1);
         }

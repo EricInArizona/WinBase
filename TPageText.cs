@@ -44,6 +44,8 @@ class TPageText : TabPage
     MainTextBox.Text = "";
     MainTextBox.Dock = DockStyle.Fill;
     // MainTextBox.MaxLength = 6000;
+    MainTextBox.AllowDrop = false;
+    MainTextBox.WordWrap = true;
     MainTextBox.Multiline = true;
     MainTextBox.ReadOnly = true;
     MainTextBox.ScrollBars = System.Windows.
