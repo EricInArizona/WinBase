@@ -23,6 +23,9 @@ class TPageText : TabPage
   {
   private MainFormBase MForm;
   private TextBox MainTextBox;
+  private string fileName = "";
+  private string status = "";
+
 
 
   private TPageText()
@@ -72,9 +75,16 @@ class TPageText : TabPage
     }
 
 
-  internal void SetReadOnly( bool SetTo )
+
+  internal void setFileName( string setTo )
     {
-    MainTextBox.ReadOnly = SetTo;
+    fileName = setTo;
+    }
+
+
+  internal void SetReadOnly( bool setTo )
+    {
+    MainTextBox.ReadOnly = setTo;
     }
 
 
@@ -125,40 +135,6 @@ class TPageText : TabPage
 */
 
 
-
-  internal bool WriteToTextFile( string FileName )
-    {
-/*
-    try
-    {
-    using( StreamWriter SWriter = new
-                     StreamWriter( FileName  ))
-      {
-      int Last = ;
-      for( int Count = 0; Count < Last; Count++ )
-        {
-        ECTime ShowTime = new ECTime(
-                              TimeSequence >> 8 );
-
-        string Line = ShowTime.
-                ToLocalTimeString() + " on " +
-                ShowTime.ToLocalDateString();
-
-        SWriter.WriteLine( Line );
-        SWriter.WriteLine( " " );
-        }
-      }
-
-    }
-    catch( Exception ) // Except )
-      {
-      return false;
-      }
-*/
-    return true;
-    }
-
-
 /*
   private void StatusForm_Activated(
                      object sender, EventArgs e)
@@ -203,6 +179,115 @@ class TPageText : TabPage
                                 EventArgs e )
     {
     MainTextBox.Select();
+    }
+
+
+/*
+  private bool ReadFromTextFile( string FileName,
+                                bool AsciiOnly )
+    {
+    try
+    {
+    if( !File.Exists( FileName ))
+      {
+      // Might be adding a new file that doesn't
+      // exist yet.
+      MainTextBox.Text = "";
+      return false;
+      }
+
+    // This opens the file, reads or writes all the
+    // bytes, then closes the file.
+    byte[] FileBytes = File.ReadAllBytes( FileName );
+    if( FileBytes == null )
+      {
+      MainTextBox.Text = "FileBytes was null.";
+      return false;
+      }
+
+    string FileS = UTF8Strings.BytesToString(
+                       FileBytes, 1000000000 );
+
+    StringBuilder SBuilder = new StringBuilder();
+    StringBuilder FileSBuilder = new StringBuilder();
+
+    int Last = FileS.Length;
+    for( int Count = 0; Count < Last; Count++ )
+      {
+      char OneChar = FileS[Count];
+      if( OneChar == '\r' )
+        continue; // Ignore it.
+
+      if( OneChar == '\n' )
+        {
+        string Line = SBuilder.ToString();
+        SBuilder.Clear();
+        Line = Line.Replace( "\t", "  " );
+        Line = StringsEC.GetCleanUnicodeString(
+                            Line, 4000, false );
+        Line = Line.TrimEnd();
+
+        // if( Line == "" )
+          // continue;
+
+        FileSBuilder.Append( Line + "\r\n" );
+        continue;
+        }
+
+      SBuilder.Append( OneChar );
+      }
+
+    MainTextBox.Text = FileSBuilder.ToString().
+                                  TrimEnd();
+    return true;
+    }
+    catch( Exception Except )
+      {
+      MForm.ShowStatus(
+               "Could not read the file: \r\n" +
+                 FileName );
+      MForm.ShowStatus( Except.Message );
+      return false;
+      }
+    }
+*/
+
+
+
+
+  internal bool writeToTextFile()
+    {
+    try
+    {
+    status += "Saving: " + fileName + "\r\n";
+
+    Encoding Encode = Encoding.ASCII;
+                            // Encoding.UTF8;
+
+    using( StreamWriter SWriter = new
+            StreamWriter( fileName, false, Encode ))
+      {
+      string[] Lines = MainTextBox.Lines;
+
+      foreach( string Line in Lines )
+        {
+        // SWriter.WriteLine( Line.TrimEnd() +
+        //                      "\r\n" );
+        SWriter.WriteLine( Line.TrimEnd() );
+        }
+
+      // SWriter.WriteLine( " " );
+      }
+
+    return true;
+    }
+    catch( Exception Except )
+      {
+      status += "Could not write to the file:\r\n";
+      status += fileName + "\r\n";
+      status += Except.Message + "\r\n";
+      return false;
+      }
     }
 
 

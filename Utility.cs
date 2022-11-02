@@ -91,7 +91,7 @@ using System.IO;
 
 
 
-  internal static string CleanAsciiTextField(
+  internal static string getCleanAscii(
                                 string InString,
                                 bool KeepTab,
                                 int HowLong )
@@ -232,7 +232,7 @@ using System.IO;
     double Seconds;
 
     // 157 28' 24.3640" W
-    string CleanS = CleanAsciiTextField(
+    string CleanS = getCleanAscii(
                           InString, false, 100 );
     // string CleanS = InString.Replace( "", "" );
     CleanS = CleanS.Replace( "\'", "" );
@@ -297,7 +297,7 @@ using System.IO;
     double Minutes;
     double Seconds;
 
-    string CleanS = CleanAsciiTextField(
+    string CleanS = getCleanAscii(
                         InString, false, 100 );
     // CleanS = InString.Replace( "", "" );
     CleanS = CleanS.Replace( "\'", "" );
